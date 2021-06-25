@@ -2,15 +2,15 @@ package main
 
 //@tsInterface[context="internal"]
 type User struct {
-	Id    uint   `json:"id"`
-	Name  string `json:"name"`
-	Given string `json:"given"`
+	Id    uint
+	Name  string
+	Given string
 }
 
 //@tsInterface[context="external"]
 type Person struct {
-	Name  string `json:"name"`
-	Given string `json:"given"`
+	Name  string
+	Given string
 }
 
 //@tsInterface
