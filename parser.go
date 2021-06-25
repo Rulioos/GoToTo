@@ -16,7 +16,7 @@ type TsInterface struct {
 func ParseComments(c string) string {
 	// Checking if comment can be parsed
 	str := SpaceStringsBuilder(c)
-	reg := `^@tsInterface(\[context=(\"[A-Za-z]+\")\]|)+$`
+	reg := `^@tsInterface(\[context=(\"[A-Za-z]+\")\]|)?$`
 	compReg := regexp.MustCompile(reg)
 	isNotMatch := !compReg.MatchString(str)
 	if isNotMatch {
