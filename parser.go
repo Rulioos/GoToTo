@@ -11,7 +11,13 @@ import (
 
 type TsInterface struct {
 	Name   string
-	Fields map[string]string
+	Fields []Field
+}
+
+type Field struct {
+	Name      string
+	Ftype     string
+	Omitempty bool
 }
 
 func ParseComments(c string) string {
@@ -73,7 +79,7 @@ func ParseGoFile(filename string) map[string][]TsInterface {
 						name := typeSpec.Name.Name
 						tsinterface := TsInterface{
 							Name:   name,
-							Fields: make(map[string]string),
+							Fields: make([]Field, 0),
 						}
 						switch typeSpec.Type.(type) {
 						case *ast.StructType:
@@ -103,14 +109,20 @@ func ParseGoFile(filename string) map[string][]TsInterface {
 
 // Used to append files to ts interface while parsing
 func appendFields(field *ast.Field, tsinterface *TsInterface, fieldType string) {
-	fname, _ := parseTags(field.Tag.Value)
-	tsinterface.Fields[fname] = MapToTs(fieldType)
+	fname, omitempty := parseTags(field.Tag.Value)
+	f := Field{
+		Name:      fname,
+		Ftype:     MapToTs(fieldType),
+		Omitempty: omitempty,
+	}
+	tsinterface.Fields = append(tsinterface.Fields, f)
 }
 
+//Parsing json tags
 func parseTags(tag string) (string, bool) {
 	var omitempty bool
 	var jname string
-	json_tag_reg := `^json:\"([A-za-z]+)?((,omitempty)?|)((,-)?|)\"$`
+	json_tag_reg := `^json:\"([A-za-z]+)?((,omitempty)?|)((,-)?|)\"$` //Json identifier regex
 	s := SpaceStringsBuilder(tag)[1 : len(tag)-1]
 
 	compReg := regexp.MustCompile(json_tag_reg)
@@ -119,6 +131,7 @@ func parseTags(tag string) (string, bool) {
 		return "", false
 	}
 
+	//Looking for name and omitempty
 	s = strings.SplitN(s, ":", 2)[1]
 	params := strings.SplitN(s[1:len(s)-1], ",", 3)
 	for _, param := range params {

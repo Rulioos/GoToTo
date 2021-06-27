@@ -1,8 +1,13 @@
+export interface Product {
+	price : number;
+	name : string;
+}
+
 declare namespace internal {
 	export interface User {
 		id : number;
 		name : string;
-		given : string;
+		given ?: string;
 	}
 
 }
@@ -16,14 +21,9 @@ declare namespace external {
 	export interface Person {
 		name : string;
 		given : string;
-		adresses : Adress[];
+		adresses ?: Adress[];
 	}
 
 }
 
-
-export interface Product {
-	price : number;
-	name : string;
-}
 

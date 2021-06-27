@@ -5,6 +5,6 @@ export interface Adress {
 export interface Person {
 	name : string;
 	given : string;
-	adresses : Adress[];
+	adresses ?: Adress[];
 }
 

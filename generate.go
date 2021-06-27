@@ -17,8 +17,12 @@ func writeInterface(f *os.File, i []TsInterface, indent string) {
 		declaration := fmt.Sprintf(indent+"export interface %s {\n", tsIf.Name)
 		_, err := f.WriteString(declaration)
 		check(err)
-		for fn, ft := range tsIf.Fields {
-			field := fmt.Sprintf(indent+"\t%s : %s;\n", fn, ft)
+		for _, field := range tsIf.Fields {
+			omit := ""
+			if field.Omitempty {
+				omit = "?"
+			}
+			field := fmt.Sprintf(indent+"\t%s %s: %s;\n", field.Name, omit, field.Ftype)
 			_, err := f.WriteString(field)
 			check(err)
 		}
