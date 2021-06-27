@@ -6,6 +6,7 @@ import (
 	"go/parser"
 	"go/token"
 	"regexp"
+	"strings"
 )
 
 type TsInterface struct {
@@ -78,11 +79,15 @@ func ParseGoFile(filename string) map[string][]TsInterface {
 						case *ast.StructType:
 							structType := typeSpec.Type.(*ast.StructType)
 							for _, field := range structType.Fields.List {
-								i := field.Type.(*ast.Ident)
-								fieldType := i.Name
-								for _, field_name := range field.Names {
-									tsinterface.Fields[field_name.Name] = MapToTs(fieldType)
+								switch field.Type.(type) {
+								case *ast.Ident: // field is basetype or Object
+									fieldtype := field.Type.(*ast.Ident)
+									appendFields(field, &tsinterface, fieldtype.Name)
+								case *ast.ArrayType: // field is []basetype or []Object
+									fieldtype_name := fmt.Sprintf("%v[]", field.Type.(*ast.ArrayType).Elt)
+									appendFields(field, &tsinterface, fieldtype_name)
 								}
+
 							}
 
 						}
@@ -94,4 +99,36 @@ func ParseGoFile(filename string) map[string][]TsInterface {
 	}
 	return batches
 
+}
+
+// Used to append files to ts interface while parsing
+func appendFields(field *ast.Field, tsinterface *TsInterface, fieldType string) {
+	fname, _ := parseTags(field.Tag.Value)
+	tsinterface.Fields[fname] = MapToTs(fieldType)
+}
+
+func parseTags(tag string) (string, bool) {
+	var omitempty bool
+	var jname string
+	json_tag_reg := `^json:\"([A-za-z]+)?((,omitempty)?|)((,-)?|)\"$`
+	s := SpaceStringsBuilder(tag)[1 : len(tag)-1]
+
+	compReg := regexp.MustCompile(json_tag_reg)
+	isMatch := compReg.MatchString(s)
+	if !isMatch {
+		return "", false
+	}
+
+	s = strings.SplitN(s, ":", 2)[1]
+	params := strings.SplitN(s[1:len(s)-1], ",", 3)
+	for _, param := range params {
+		if param == "omitempty" {
+			omitempty = true
+		} else if param != "-" && param != "omitempty" {
+			jname = param
+			fmt.Printf("jname: %v\n", jname)
+		}
+	}
+
+	return jname, omitempty
 }

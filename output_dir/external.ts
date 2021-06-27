@@ -1,5 +1,10 @@
+export interface Adress {
+	given : string;
+}
+
 export interface Person {
-	Name : string;
-	Given : string;
+	name : string;
+	given : string;
+	adresses : Adress[];
 }
 
