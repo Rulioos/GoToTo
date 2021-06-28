@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"go/ast"
 	"go/parser"
@@ -23,34 +24,36 @@ type Field struct {
 }
 
 //ParseComment parses a comment with pattern //@tsInterface[context="SomeContext"] and returns the context. If the context is not defined: returns empty string.
-func ParseComment(c string) string {
+func ParseComment(c string) (string, error) {
 	str := SpaceStringsBuilder(c)
 	reg := `^@tsInterface(\[context=(\"[A-Za-z]+\")\]|)?$`
 	compReg := regexp.MustCompile(reg)
 	isNotMatch := !compReg.MatchString(str)
 	if isNotMatch {
-		fmt.Println("error matching comment: ", str, "\n. Does not match format: ", "@tsInterface[context=\"internal\"] or @tsInterface")
-		return ""
+		err_string := fmt.Sprintf("Comment %s does not match regex pattern", c)
+		return "", errors.New(err_string)
 	}
 	//Checking if there is a context
 	if len(str) <= 14 {
-		return ""
+		return "", nil
 	} else {
 		//Getting context
 		contextReg := "\"[A-Za-z]+\""
 		compContextReg := regexp.MustCompile(contextReg)
 		context := compContextReg.FindString(str)
 		context = context[1 : len(context)-1]
-		return strings.ToLower(context)
+		return strings.ToLower(context), nil
 	}
 }
 
 //getContextsAndPos loops over the comments of parsed file and fill a set of contexts with their name and a map[line_in_file]context
 func getContextsAndPos(coms []*ast.CommentGroup, fset *token.FileSet, comMap *map[int]string, contextSlice *[]string) {
 	for _, s := range coms {
-		context := ParseComment(s.Text())
-		(*comMap)[fset.Position(s.Pos()).Line] = context
-		*contextSlice = append(*contextSlice, context)
+		context, err := ParseComment(s.Text())
+		if err == nil {
+			(*comMap)[fset.Position(s.Pos()).Line] = context
+			*contextSlice = append(*contextSlice, context)
+		}
 	}
 }
 
@@ -133,7 +136,7 @@ func parseTags(tag string) (string, bool) {
 	var omitempty bool
 	var jname string
 	json_tag_reg := `^json:\"([A-za-z]+)?((,omitempty)?|)((,-)?|)\"$` //Json identifier regex
-	s := SpaceStringsBuilder(tag)[1 : len(tag)-1]
+	s := tag[1 : len(tag)-1]
 
 	compReg := regexp.MustCompile(json_tag_reg)
 	isMatch := compReg.MatchString(s)
@@ -151,6 +154,5 @@ func parseTags(tag string) (string, bool) {
 			jname = param
 		}
 	}
-
 	return jname, omitempty
 }

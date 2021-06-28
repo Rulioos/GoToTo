@@ -25,9 +25,11 @@ func main() {
 		GenerateConfigYamlCmd.Parse(os.Args[2:])
 		fmt.Printf("outputDir: %v\n", *outputDir)
 		fmt.Printf("scanPath: %v\n", *scanPath)
+		GenerateConfigYaml(*scanPath, *outputDir)
 	case "generateTS":
 		GenerateFromYamlCmd.Parse(os.Args[2:])
 		fmt.Printf("projectPath: %v\n", *projectPath)
+		GenerateFromYaml(*projectPath)
 	default:
 		fmt.Println("expected 'generateYML' or 'generateTS' subcommands")
 		os.Exit(1)
