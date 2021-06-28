@@ -1,1 +1,5 @@
   #ignore output_dir and output.ts
+  project_example/
+  
+  #ignore app
+  Gototo/
