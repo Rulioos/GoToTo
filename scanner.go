@@ -9,7 +9,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-//Scan project (or dir) to find all go files
+//scanProject scans a whole project and returns all go filepaths in the path tree.
 func scanProject(scanPath string) ([]string, error) {
 	goFilesPath := make([]string, 0)
 	e := filepath.Walk(scanPath, func(path string, f os.FileInfo, err error) error {
@@ -26,7 +26,7 @@ func scanProject(scanPath string) ([]string, error) {
 	return goFilesPath, nil
 }
 
-//YamlStruct map[filename]contexts
+//YamlConf holds the configuration that will drive ts files creation.
 type YamlConf struct {
 	OutputDirPath       string
 	ContextList         []string
@@ -34,9 +34,7 @@ type YamlConf struct {
 	Batches             map[string][]TsInterface
 }
 
-//Generate 1 YAML files that list all contexts and positions.
-//A public file named gototoFile listing contexts by filepaths
-//A hidden file containing positions for each contexts
+//GenerateConfigYaml generate a GototoConf.yaml that will drive the generateTS command.
 func GenerateConfigYaml(scanPath string, outputDir string) {
 	files, err := scanProject(scanPath)
 	if err != nil {
@@ -83,8 +81,7 @@ func GenerateConfigYaml(scanPath string, outputDir string) {
 	fconf.Close()
 }
 
-//Unmarshalling conf file to get conf
-//Returns YamlConf
+//GetYamlConfig gets the Yaml configuration from the file if it does exists.
 func (y *YamlConf) GetYamlConfig(scanPath string) (*YamlConf, error) {
 	configPath := scanPath + "/gototoConf.yaml"
 	configFile, err := ioutil.ReadFile(configPath)

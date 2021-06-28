@@ -9,19 +9,21 @@ import (
 	"strings"
 )
 
+//Type that holds the name of a struct and it's fields.
 type TsInterface struct {
 	Name   string
 	Fields []Field
 }
 
+//Type that holds the fields name,type and omitempty option in a struct.
 type Field struct {
 	Name      string
 	Ftype     string
 	Omitempty bool
 }
 
+//ParseComment parses a comment with pattern //@tsInterface[context="SomeContext"] and returns the context. If the context is not defined: returns empty string.
 func ParseComment(c string) string {
-	// Checking if comment can be parsed
 	str := SpaceStringsBuilder(c)
 	reg := `^@tsInterface(\[context=(\"[A-Za-z]+\")\]|)?$`
 	compReg := regexp.MustCompile(reg)
@@ -43,8 +45,8 @@ func ParseComment(c string) string {
 	}
 }
 
-//Get contexts and pos from a file
-func GetContextsAndPos(coms []*ast.CommentGroup, fset *token.FileSet, comMap *map[int]string, contextSlice *[]string) {
+//getContextsAndPos loops over the comments of parsed file and fill a set of contexts with their name and a map[line_in_file]context
+func getContextsAndPos(coms []*ast.CommentGroup, fset *token.FileSet, comMap *map[int]string, contextSlice *[]string) {
 	for _, s := range coms {
 		context := ParseComment(s.Text())
 		(*comMap)[fset.Position(s.Pos()).Line] = context
@@ -52,7 +54,7 @@ func GetContextsAndPos(coms []*ast.CommentGroup, fset *token.FileSet, comMap *ma
 	}
 }
 
-//Parse a file to match context and structs. Return batches ( map key= context, v= interfaces)
+//ParseGoFile parses a file to return batches of map [context string] []ts TsInterface for one file.
 func ParseGoFile(filename string, contextSlice *[]string) map[string][]TsInterface {
 	fset := token.NewFileSet()
 	coms, err := parser.ParseFile(fset, filename, nil, parser.ParseComments)
@@ -65,7 +67,7 @@ func ParseGoFile(filename string, contextSlice *[]string) map[string][]TsInterfa
 	batches := make(map[string][]TsInterface)
 	localContextSlice := make([]string, 0)
 
-	GetContextsAndPos(coms.Comments, fset, &comMap, &localContextSlice)
+	getContextsAndPos(coms.Comments, fset, &comMap, &localContextSlice)
 	SetifyString(&localContextSlice)
 	*contextSlice = append(*contextSlice, localContextSlice...)
 
@@ -115,7 +117,7 @@ func ParseGoFile(filename string, contextSlice *[]string) map[string][]TsInterfa
 
 }
 
-// Used to append files to ts interface while parsing
+//appendFields is used to append files to a tsInterface while parsing a file
 func appendFields(field *ast.Field, tsinterface *TsInterface, fieldType string) {
 	fname, omitempty := parseTags(field.Tag.Value)
 	f := Field{
@@ -126,7 +128,7 @@ func appendFields(field *ast.Field, tsinterface *TsInterface, fieldType string) 
 	tsinterface.Fields = append(tsinterface.Fields, f)
 }
 
-//Parsing json tags
+//parseTags parses json tags next to field to get their name and omitempty option value.
 func parseTags(tag string) (string, bool) {
 	var omitempty bool
 	var jname string

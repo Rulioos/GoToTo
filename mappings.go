@@ -1,5 +1,6 @@
 package main
 
+//Mappings is used to map go types to ts types
 var mappings = map[string]string{
 	"int":     "number",
 	"int8":    "number",
@@ -13,6 +14,7 @@ var mappings = map[string]string{
 	"bool":    "boolean",
 }
 
+//MapToTs maps go type to ts type
 func MapToTs(field string) string {
 	if translation, ok := mappings[field]; ok {
 		return translation

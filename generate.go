@@ -5,6 +5,7 @@ import (
 	"os"
 )
 
+//writeInterfacesWithinNamespace writes interfaces in ts files.
 func writeInterfacesWithinNamespace(f *os.File, i []TsInterface, namespace string) {
 	var indent string
 	var namespaceDeclaration string
@@ -34,7 +35,7 @@ func writeInterfacesWithinNamespace(f *os.File, i []TsInterface, namespace strin
 	f.WriteString(namespaceEnd)
 }
 
-//Generate all ts files from yaml conf
+//GenerateFromYaml generate the TS files from the YAML configuration file.
 func GenerateFromYaml(scanPath string) {
 	var ymlConf YamlConf
 	var err error
