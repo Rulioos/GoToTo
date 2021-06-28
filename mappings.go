@@ -10,7 +10,7 @@ var mappings = map[string]string{
 	"uint32":  "number",
 	"uint64":  "number",
 	"uintptr": "number",
-	"bool":"boolean",
+	"bool":    "boolean",
 }
 
 func MapToTs(field string) string {

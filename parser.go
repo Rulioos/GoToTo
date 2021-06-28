@@ -20,7 +20,7 @@ type Field struct {
 	Omitempty bool
 }
 
-func ParseComments(c string) string {
+func ParseComment(c string) string {
 	// Checking if comment can be parsed
 	str := SpaceStringsBuilder(c)
 	reg := `^@tsInterface(\[context=(\"[A-Za-z]+\")\]|)?$`
@@ -39,30 +39,38 @@ func ParseComments(c string) string {
 		compContextReg := regexp.MustCompile(contextReg)
 		context := compContextReg.FindString(str)
 		context = context[1 : len(context)-1]
-		return context
+		return strings.ToLower(context)
+	}
+}
+
+//Get contexts and pos from a file
+func GetContextsAndPos(coms []*ast.CommentGroup, fset *token.FileSet, comMap *map[int]string, contextSlice *[]string) {
+	for _, s := range coms {
+		context := ParseComment(s.Text())
+		(*comMap)[fset.Position(s.Pos()).Line] = context
+		*contextSlice = append(*contextSlice, context)
 	}
 }
 
 //Parse a file to match context and structs. Return batches ( map key= context, v= interfaces)
-func ParseGoFile(filename string) map[string][]TsInterface {
+func ParseGoFile(filename string, contextSlice *[]string) map[string][]TsInterface {
 	fset := token.NewFileSet()
 	coms, err := parser.ParseFile(fset, filename, nil, parser.ParseComments)
 	if err != nil {
 		fmt.Println("Error reaching file:", filename, err)
 		return nil
 	}
+	//Parsing comments
 	comMap := make(map[int]string)
 	batches := make(map[string][]TsInterface)
-	contextSlice := make([]string, 0)
+	localContextSlice := make([]string, 0)
 
-	for _, s := range coms.Comments {
-		context := ParseComments(s.Text())
-		comMap[fset.Position(s.Pos()).Line] = context
-		contextSlice = append(contextSlice, context)
-	}
-	SetifyString(&contextSlice)
+	GetContextsAndPos(coms.Comments, fset, &comMap, &localContextSlice)
+	SetifyString(&localContextSlice)
+	*contextSlice = append(*contextSlice, localContextSlice...)
 
-	for _, c := range contextSlice {
+	//Building batches
+	for _, c := range localContextSlice {
 		batches[c] = make([]TsInterface, 0)
 	}
 
@@ -139,7 +147,6 @@ func parseTags(tag string) (string, bool) {
 			omitempty = true
 		} else if param != "-" && param != "omitempty" {
 			jname = param
-			fmt.Printf("jname: %v\n", jname)
 		}
 	}
 

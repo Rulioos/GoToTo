@@ -3,20 +3,22 @@ package main
 import (
 	"fmt"
 	"os"
-
-	"github.com/Pallinder/go-randomdata"
 )
 
-func check(err error) {
-	if err != nil {
-		panic(err)
+func writeInterfacesWithinNamespace(f *os.File, i []TsInterface, namespace string) {
+	var indent string
+	var namespaceDeclaration string
+	var namespaceEnd string
+	if namespace != "" {
+		indent = "\t"
+		namespaceDeclaration = fmt.Sprintf("declare namespace %s {\n", namespace)
+		namespaceEnd = "}\n\n\n"
 	}
-}
-func writeInterface(f *os.File, i []TsInterface, indent string) {
+	f.WriteString(namespaceDeclaration)
 	for _, tsIf := range i {
 		declaration := fmt.Sprintf(indent+"export interface %s {\n", tsIf.Name)
 		_, err := f.WriteString(declaration)
-		check(err)
+		Check(err)
 		for _, field := range tsIf.Fields {
 			omit := ""
 			if field.Omitempty {
@@ -24,55 +26,49 @@ func writeInterface(f *os.File, i []TsInterface, indent string) {
 			}
 			field := fmt.Sprintf(indent+"\t%s %s: %s;\n", field.Name, omit, field.Ftype)
 			_, err := f.WriteString(field)
-			check(err)
+			Check(err)
 		}
 
 		f.WriteString(indent + "}\n\n")
-
 	}
-
+	f.WriteString(namespaceEnd)
 }
 
-//GENERATE ONE FILE ; CONTEXTS SEPARATED BY NAMESPACES
-func GenerateAll_TS_namespace(filename string, batches map[string][]TsInterface) {
-	f, err := os.Create(filename + ".ts")
-	check(err)
-
-	defer f.Close()
-	for c, i := range batches {
-		indent := ""
-		if len(c) >= 1 {
-			namespace := fmt.Sprintf("declare namespace %s {\n", c)
-			_, err = f.WriteString(namespace)
-			check(err)
-			indent = "\t"
-		}
-
-		writeInterface(f, i, indent)
-
-		if len(c) >= 1 {
-			_, err = f.WriteString("}\n\n\n")
-			check(err)
-		}
-
+//Generate all ts files from yaml conf
+func GenerateFromYaml(scanPath string) {
+	var ymlConf YamlConf
+	var err error
+	var outputDirPath string
+	var namespace string
+	_, err = ymlConf.GetYamlConfig(scanPath)
+	Check(err)
+	if ymlConf.OutputDirPath[0:2] == "./" {
+		outputDirPath = scanPath + ymlConf.OutputDirPath[1:]
+	} else {
+		outputDirPath = ymlConf.OutputDirPath
 	}
 
-}
-
-// GENERATE A FOLDER CONTAINING MULTIPLE FILES. FILESNAME ARE CONTEXTS. IF NOT DEFINE IT IS A RANDOM NAME
-func GenerateAll_TS_multiple_files(output_dir string, batches map[string][]TsInterface) {
-	os.RemoveAll(output_dir)
-	err := os.Mkdir(output_dir, 0755)
-	check(err)
-	for c, i := range batches {
-		filename := c
-		if len(c) == 0 {
-			filename = randomdata.SillyName()
-		}
-		filepath := fmt.Sprintf("%s/%s.ts", output_dir, filename)
+	//Creating dir
+	os.RemoveAll(outputDirPath)
+	err = os.Mkdir(outputDirPath, 0755)
+	Check(err)
+	//looping over filenames
+	for filename, contexts := range ymlConf.FilenameContextsMap {
+		filepath := outputDirPath + "/" + filename + ".ts"
 		f, err := os.Create(filepath)
-		check(err)
-		writeInterface(f, i, "")
+		Check(err)
+
+		//looping over contexts in the same filename
+		for index, c := range contexts {
+			if len(contexts) > 1 {
+				namespace = contexts[index]
+			}
+			if c == "User" {
+				fmt.Printf("ymlConf.Batches: %v\n", ymlConf.Batches[c])
+			}
+			writeInterfacesWithinNamespace(f, ymlConf.Batches[c], namespace)
+
+		}
 		f.Close()
 	}
 
