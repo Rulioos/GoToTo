@@ -1,0 +1,51 @@
+outputdirpath: ./output
+contextlist:
+- product
+- user
+filenamecontextsmap:
+  ProductModel:
+  - product
+  UserModel:
+  - user
+batches:
+  product:
+  - name: Item
+    fields:
+    - name: name
+      ftype: string
+      omitempty: false
+    - name: price
+      ftype: number
+      omitempty: false
+    - name: in_stock
+      ftype: boolean
+      omitempty: false
+  user:
+  - name: User
+    fields:
+    - name: person
+      ftype: Person
+      omitempty: false
+    - name: pwd
+      ftype: string
+      omitempty: false
+    - name: login
+      ftype: string
+      omitempty: false
+  - name: Person
+    fields:
+    - name: name
+      ftype: string
+      omitempty: false
+    - name: given
+      ftype: string
+      omitempty: false
+    - name: gender
+      ftype: string
+      omitempty: false
+    - name: phone
+      ftype: string
+      omitempty: true
+    - name: email
+      ftype: string
+      omitempty: false

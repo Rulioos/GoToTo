@@ -1,5 +1,7 @@
-module pground
+module Gototo
 
 go 1.16
 
-require github.com/Pallinder/go-randomdata v1.2.0
+require (
+	gopkg.in/yaml.v2 v2.4.0 // indirect
+)
