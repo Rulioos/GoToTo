@@ -1,4 +1,4 @@
-outputdirpath: ./output
+outputdirpath: ./output_dir
 contextlist:
 - product
 - user
