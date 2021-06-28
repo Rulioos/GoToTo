@@ -1,4 +1,4 @@
-module pground
+module Gototo
 
 go 1.16
 
