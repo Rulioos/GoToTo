@@ -43,6 +43,15 @@ type Product struct {
 ```
 ### Output
 
+> **File Tree**
+
+:file_folder: My Project
+┣ :clipboard:gototoConf.yaml
+┣ :file_folder: src
+┣ :file_folder: output_dir
+&nbsp;&nbsp;&nbsp;&nbsp;┣:page_facing_up: UserModel.ts
+&nbsp;&nbsp;&nbsp;&nbsp;┣ :page_facing_up: ProductModel.ts
+┣ :file_folder: src
 
 > **GototoConf.yaml**
 ```yaml
@@ -126,6 +135,4 @@ export interface Product {
 ```
 > **Note:** YAML file and TS files are rewritten each time corresponding command is launched.
 Still implementing tests.
-
-
 
