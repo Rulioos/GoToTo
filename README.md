@@ -46,15 +46,15 @@ type Product struct {
 
 > **GototoConf.yaml**
 ```yaml
-outputdirpath: ./output_dir
+outputdirpath: ./modelTS
 contextlist:
-	- product
-	- user
+  - product
+  - user
 filenamecontextsmap:
-	ProductModel:
-	- product
-        UserModel:
-        - user
+  ProductModel:
+    - product
+  UserModel:
+    - user
 batches:
   product:
     - name: Item
