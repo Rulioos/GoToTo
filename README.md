@@ -46,12 +46,12 @@ type Product struct {
 > **File Tree**
 
 :file_folder: My Project
-┣ :clipboard:gototoConf.yaml
-┣ :file_folder: src
-┣ :file_folder: output_dir
-&nbsp;&nbsp;&nbsp;&nbsp;┣:page_facing_up: UserModel.ts
-&nbsp;&nbsp;&nbsp;&nbsp;┣ :page_facing_up: ProductModel.ts
-┣ :file_folder: src
+┣ :clipboard:gototoConf.yaml <br/>
+┣ :file_folder: src <br/>
+┣ :file_folder: output_dir <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;┣:page_facing_up: UserModel.ts <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;┣ :page_facing_up: ProductModel.ts <br/>
+┣ :file_folder: src <br/>
 
 > **GototoConf.yaml**
 ```yaml
