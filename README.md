@@ -45,7 +45,7 @@ type Product struct {
 
 > **File Tree**
 
-:file_folder: My Project
+:file_folder: My Project <br/>
 ┣ :clipboard:gototoConf.yaml <br/>
 ┣ :file_folder: src <br/>
 ┣ :file_folder: output_dir <br/>
