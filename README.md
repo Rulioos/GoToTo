@@ -9,9 +9,11 @@ When building in project.
 ```bash
 $ go test
 $ go build
-$ ./Gototo generateYML -spath="my/project/path" -"my/output/dir/path"
-$ ./Gototo generateYML -spath="anotherprojectpath" -"./insidemyprojectpath"
-$ ./Gototo generateTS -spath="my/project/path"
+$ ./Gototo GenerateYML -spath="my/project/path" -dir="my/output/dir/path"
+$ ./Gototo GenerateYML -spath="anotherprojectpath" -dir="./insidemyprojectpath"
+$ ./Gototo UpdateYML -spath="project_path" -dir="./anewdir" --no-more-files=true
+$ ./Gototo GenerateTS -spath="my/project/path" --ignore-pending=false
+$ ./Gototo help
 ```
 
 
@@ -59,6 +61,7 @@ outputdirpath: ./modelTS
 contextlist:
   - product
   - user
+pending: []
 filenamecontextsmap:
   ProductModel:
     - product
