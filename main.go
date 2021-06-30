@@ -51,7 +51,7 @@ func main() {
 		UpdateConfigYamlCmd.Parse(os.Args[2:])
 		fmt.Printf("outputDir: %v\n", *UpdateYamlDir)
 		fmt.Printf("scanPath: %v\n", *UpdateYamlPath)
-		fmt.Printf("More files: %v\n", *NoMoreFiles)
+		fmt.Printf("No more files: %v\n", *NoMoreFiles)
 		UpdateConfigYaml(*UpdateYamlPath, *UpdateYamlDir, *NoMoreFiles)
 	case "generateTS":
 		GenerateFromYamlCmd.Parse(os.Args[2:])
