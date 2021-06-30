@@ -15,7 +15,7 @@ $ ./Gototo generateTS -spath="my/project/path"
 ```
 
 
-# V0.1.0
+# V0.2.0
 
 ### Input
 ```go

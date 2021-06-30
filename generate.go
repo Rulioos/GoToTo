@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 )
@@ -36,13 +37,23 @@ func writeInterfacesWithinNamespace(f *os.File, i []TsInterface, namespace strin
 }
 
 //GenerateFromYaml generate the TS files from the YAML configuration file.
-func GenerateFromYaml(scanPath string) {
+func GenerateFromYaml(scanPath string, ignorePending bool) {
 	var ymlConf YamlConf
 	var err error
 	var outputDirPath string
 	var namespace string
+
 	_, err = ymlConf.GetYamlConfig(scanPath)
 	Check(err)
+
+	if !ignorePending && len(ymlConf.Pending) > 0 {
+		e := errors.New("please assign pending contexts or use --ignore-pending= true flag")
+		panic(e)
+	}
+
+	for _, pc := range ymlConf.Pending {
+		ymlConf.Batches[pc] = nil
+	}
 	if ymlConf.OutputDirPath[0:2] == "./" {
 		outputDirPath = scanPath + ymlConf.OutputDirPath[1:]
 	} else {

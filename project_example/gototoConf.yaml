@@ -1,13 +1,35 @@
-outputdirpath: ./output_dir
+outputdirpath: ./ModelsTS
 contextlist:
 - product
 - user
+- newcontext
+pending: []
+
 filenamecontextsmap:
-  ProductModel:
+  MyProductModelPersonalized:
   - product
+  - newcontext
   UserModel:
   - user
 batches:
+  newcontext:
+  - name: Address
+    fields:
+    - name: id
+      ftype: number
+      omitempty: false
+    - name: street
+      ftype: string
+      omitempty: false
+    - name: h_number
+      ftype: string
+      omitempty: false
+    - name: city
+      ftype: string
+      omitempty: false
+    - name: country_code
+      ftype: string
+      omitempty: false
   product:
   - name: Item
     fields:
