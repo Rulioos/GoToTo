@@ -1,4 +1,4 @@
-module Gototo
+module github.com/Rulioos/Gototo
 
 go 1.16
 
