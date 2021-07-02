@@ -20,7 +20,7 @@ const help string = "\n\nGototo generates TS files out of annotated structs in a
 	"Use Gototo command [--help] for more information on a given command.\n\n"
 
 func main() {
-
+	ParseEnumsGoFile("project_example/domain/enums/enums.go")
 	//Generate YAML FLAGS
 	GenerateConfigYamlCmd := flag.NewFlagSet("generateYML", flag.ExitOnError) //Generate config file
 	outputDir := GenerateConfigYamlCmd.String("dir", "", "Directory in which the .ts files will be created")

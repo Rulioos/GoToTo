@@ -1,14 +1,14 @@
 outputdirpath: ./ModelsTS
 contextlist:
 - product
-- user
 - newcontext
+- user
 pending: []
-
 filenamecontextsmap:
-  MyProductModelPersonalized:
-  - product
+  NewcontextModel:
   - newcontext
+  ProductModel:
+  - product
   UserModel:
   - user
 batches:
