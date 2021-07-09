@@ -120,46 +120,6 @@ func ParseGoFile(filename string, contextSlice *[]string) map[string][]TsInterfa
 
 }
 
-type Enum struct {
-	Name   string
-	Consts map[string]string
-}
-
-//Parse enums
-func ParseEnumsGoFile(filename string) []Enum {
-	fset := token.NewFileSet()
-	enums, err := parser.ParseFile(fset, filename, nil, parser.Trace)
-	if err != nil {
-		fmt.Println("Error reaching file:", filename, err)
-	}
-
-	var current_type ast.Expr
-	current_consts := make(map[string]string)
-	batch := make([]Enum, 0)
-
-	for _, node := range enums.Decls {
-		genDecl := node.(*ast.GenDecl)
-		for _, spec := range genDecl.Specs {
-			switch spec := spec.(type) {
-			case *ast.ValueSpec:
-				if spec.Type != nil {
-					current_type = spec.Type
-					E := Enum{Name: fmt.Sprintf("%v", current_type), Consts: current_consts}
-					batch = append(batch, E)
-
-				}
-				for _, n := range spec.Names {
-					current_consts[n.Name] = n.Name
-				}
-			}
-		}
-
-	}
-	fmt.Printf("batch: %v\n", batch)
-	return batch
-
-}
-
 //appendFields is used to append files to a tsInterface while parsing a file
 func appendFields(field *ast.Field, tsinterface *TsInterface, fieldType string) {
 	fname, omitempty := parseTags(field.Tag.Value)
@@ -195,4 +155,44 @@ func parseTags(tag string) (string, bool) {
 		}
 	}
 	return jname, omitempty
+}
+
+type Enum struct {
+	Name   string
+	Consts map[string]string
+}
+
+//Parse enums
+func ParseEnumsGoFile(filename string) []Enum {
+	fset := token.NewFileSet()
+	enums, err := parser.ParseFile(fset, filename, nil, 0)
+	if err != nil {
+		fmt.Println("Error reaching file:", filename, err)
+	}
+
+	var current_type ast.Expr
+	batch := make([]Enum, 0)
+
+	for _, node := range enums.Decls {
+		genDecl := node.(*ast.GenDecl)
+		E := Enum{}
+		for _, spec := range genDecl.Specs {
+			switch spec := spec.(type) {
+			case *ast.ValueSpec:
+				if spec.Type != nil {
+					current_type = spec.Type
+					E.Name = fmt.Sprintf("%v", current_type)
+					E.Consts = make(map[string]string)
+					batch = append(batch, E)
+
+				}
+				for _, n := range spec.Names {
+					E.Consts[n.Name] = n.Name
+				}
+			}
+		}
+
+	}
+	return batch
+
 }

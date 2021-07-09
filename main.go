@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-const help string = "\n\nGototo generates TS files out of annotated structs in a project.\n" +
+const help string = "\n\nGototo generates TS files out of annotated structs and enums. in a project.\n" +
 	"Find more information at https://github.com/Rulioos/GoToTo. \n" +
 	"Commands : \n\t" +
 	"-GenerateYML => Generate the YAML configuration file that can be modified to setup filesname and manage contexts in files." +
@@ -17,10 +17,12 @@ const help string = "\n\nGototo generates TS files out of annotated structs in a
 	"\n\t" +
 	"-GenerateTS => Generate TS files according to the corresponding YAML file in the project." +
 	"\n\t\t Usage: Gototo GenerateTS -spath=[project_path] --ignore-pending=False" +
-	"Use Gototo command [--help] for more information on a given command.\n\n"
+	"Use Gototo command [--help] for more information on a given command.\n." +
+	"Enums must be in an enums.go file no matter the package. \n" +
+	"Enums should be shaped as in project example so it could be parsed\n\n"
 
 func main() {
-	ParseEnumsGoFile("project_example/domain/enums/enums.go")
+
 	//Generate YAML FLAGS
 	GenerateConfigYamlCmd := flag.NewFlagSet("generateYML", flag.ExitOnError) //Generate config file
 	outputDir := GenerateConfigYamlCmd.String("dir", "", "Directory in which the .ts files will be created")

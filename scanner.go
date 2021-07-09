@@ -32,7 +32,8 @@ type YamlConf struct {
 	ContextList         []string
 	Pending             []string
 	FilenameContextsMap map[string][]string
-	Batches             map[string][]TsInterface
+	BatchesInterface    map[string][]TsInterface
+	BatchesEnums        [][]Enum
 }
 
 //GenerateConfigYaml generate a GototoConf.yaml that will drive the generateTS command.
@@ -51,7 +52,9 @@ func GenerateConfigYaml(scanPath string, outputDir string) {
 	yamlStruct := YamlConf{OutputDirPath: outputDir,
 		FilenameContextsMap: make(map[string][]string),
 		ContextList:         contextSlice,
-		Batches:             batches}
+		BatchesInterface:    batches}
+
+	appendEnumInYaml(files, &yamlStruct)
 	for _, s := range contextSlice {
 		l := make([]string, 0)
 		l = append(l, strings.ToLower(s))
@@ -103,7 +106,7 @@ func UpdateConfigYaml(scanPath string, outputDir string, noMoreFiles bool) {
 	/*
 		Handling batches update
 	*/
-	currentConf.Batches = batches
+	currentConf.BatchesInterface = batches
 	currentConf.marshallAndWrite(scanPath + "/gototoConf.yaml")
 
 }
@@ -112,6 +115,7 @@ func UpdateConfigYaml(scanPath string, outputDir string, noMoreFiles bool) {
 func parsingProject(files []string) ([]string, map[string][]TsInterface) {
 	contextSlice := make([]string, 0)
 	batches := make(map[string][]TsInterface)
+
 	for _, gof := range files {
 		localBatch := ParseGoFile(gof, &contextSlice)
 
@@ -127,6 +131,15 @@ func parsingProject(files []string) ([]string, map[string][]TsInterface) {
 
 	SetifyString(&contextSlice)
 	return contextSlice, batches
+}
+
+func appendEnumInYaml(files []string, y *YamlConf) {
+
+	for _, f := range files {
+		if s := strings.SplitN(f, "\\", -1); s[len(s)-1] == "enums.go" {
+			y.BatchesEnums = append(y.BatchesEnums, ParseEnumsGoFile(f))
+		}
+	}
 }
 
 //GetYamlConfig gets the Yaml configuration from the file if it does exists.

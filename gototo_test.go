@@ -54,7 +54,7 @@ func TestGenerateConfigYaml(t *testing.T) {
 	assert.Equal(t, ymlConf.OutputDirPath, testOutputDirPath)
 	assert.ElementsMatch(t, ymlConf.ContextList, testContextList)
 	assert.EqualValues(t, testFilenameContextsMap, ymlConf.FilenameContextsMap)
-	assert.EqualValues(t, testbatches, ymlConf.Batches)
+	assert.EqualValues(t, testbatches, ymlConf.BatchesInterface)
 
 }
 

@@ -11,7 +11,7 @@ filenamecontextsmap:
   - product
   UserModel:
   - user
-batches:
+batchesinterface:
   newcontext:
   - name: Address
     fields:
@@ -71,3 +71,20 @@ batches:
     - name: email
       ftype: string
       omitempty: false
+batchesenums:
+- - name: paymentMethods
+    consts:
+      CASH: CASH
+      CB: CB
+      GIFT_CARD: GIFT_CARD
+  - name: roles
+    consts:
+      CHEF_COOK: CHEF_COOK
+      GENERAL_MANAGER: GENERAL_MANAGER
+      OWNER: OWNER
+      SERVER: SERVER
+- - name: productType
+    consts:
+      CLOTH: CLOTH
+      FOOD: FOOD
+      TOY: TOY
