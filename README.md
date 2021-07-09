@@ -17,7 +17,7 @@ $ ./Gototo help
 ```
 
 
-# V0.2.0
+# V1.0
 
 ### Input 
 Look at files in project_example domain. 
