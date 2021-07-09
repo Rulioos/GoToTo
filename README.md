@@ -19,30 +19,12 @@ $ ./Gototo help
 
 # V0.2.0
 
-### Input
-```go
-//@tsInterface[context="user"]
-type User struct {
-	Id     uint    `json:"id"`
-	Name   string  `json:"name"`
-	Age    int64   `json:"age"`
-	Phones []phone `json:"phones,omitempty"`
-}
+### Input 
+Look at files in project_example domain. 
+Structs are annotated with @tsInterface[context="mycontext"] so they can be generated.
+Enums needs to be in an enums.go file and formated as in the example so it can be generated. 
+No annotations needed around the enum in go.
 
-//@tsInterface[context="user"]
-type Phone struct {
-	Id          uint   `json:"id"`
-	Brand       string `json:"brand"`
-	PhoneNumber string `json:"phone_number"`
-}
-
-//@tsInterface[context="product"]
-type Product struct {
-	Id      uint   `json:"id"`
-	Name    string `json:"name"`
-	InStock bool   `json:"in_stock"`
-}
-```
 ### Output
 
 > **File Tree**
@@ -53,28 +35,50 @@ type Product struct {
 ┣ :file_folder: output_dir <br/>
 &nbsp;&nbsp;&nbsp;&nbsp;┣:page_facing_up: UserModel.ts <br/>
 &nbsp;&nbsp;&nbsp;&nbsp;┣ :page_facing_up: ProductModel.ts <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;┣ :page_facing_up: enums.ts <br/>
 ┣ :file_folder: src <br/>
 
 > **GototoConf.yaml**
 ```yaml
-outputdirpath: ./modelTS
+outputdirpath: ./ModelsTS
 contextlist:
   - product
+  - newcontext
   - user
 pending: []
 filenamecontextsmap:
+  NewcontextModel:
+    - newcontext
   ProductModel:
     - product
   UserModel:
     - user
-batches:
+batchesinterface:
+  newcontext:
+    - name: Address
+      fields:
+        - name: id
+          ftype: number
+          omitempty: false
+        - name: street
+          ftype: string
+          omitempty: false
+        - name: h_number
+          ftype: string
+          omitempty: false
+        - name: city
+          ftype: string
+          omitempty: false
+        - name: country_code
+          ftype: string
+          omitempty: false
   product:
     - name: Item
       fields:
         - name: name
           ftype: string
           omitempty: false
-        - name: id
+        - name: price
           ftype: number
           omitempty: false
         - name: in_stock
@@ -83,29 +87,50 @@ batches:
   user:
     - name: User
       fields:
-        - name: id
-          ftype: number
+        - name: person
+          ftype: Person
           omitempty: false
+        - name: pwd
+          ftype: string
+          omitempty: false
+        - name: login
+          ftype: string
+          omitempty: false
+    - name: Person
+      fields:
         - name: name
           ftype: string
           omitempty: false
-        - name: age
-          ftype: number
+        - name: given
+          ftype: string
           omitempty: false
-        - name: phones
-          ftype: []Phone
+        - name: gender
+          ftype: string
+          omitempty: false
+        - name: phone
+          ftype: string
           omitempty: true
-    - name: Phone
-      fields:
-        - name: id
-          ftype: number
-          omitempty: false
-        - name: brand
+        - name: email
           ftype: string
           omitempty: false
-        - name: phone_number
-          ftype: string
-          omitempty: false     
+batchesenums:
+  - - name: paymentMethods
+      consts:
+        CASH: CASH
+        CB: CB
+        GIFT_CARD: GIFT_CARD
+    - name: roles
+      consts:
+        CHEF_COOK: CHEF_COOK
+        GENERAL_MANAGER: GENERAL_MANAGER
+        OWNER: OWNER
+        SERVER: SERVER
+  - - name: productType
+      consts:
+        CLOTH: CLOTH
+        FOOD: FOOD
+        TOY: TOY
+
 ```
 
 
